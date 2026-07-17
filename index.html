@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de rutinas de ejercicios</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Rutinas HammerX </h1>
+    </header>
+
+    <main class="container">
+        <section id="rutinas-section">
+            <h2>Mis Rutinas</h2>
+            <form id="form-rutina">
+                <input type="text" id="nombre-rutina" placeholder="Nombre (ej: Fuerza)" required>
+                <input type="text" id="dias-rutina" placeholder="Días (ej: Lunes, Miércoles)" required>
+                <button type="submit">Crear Rutina</button>
+            </form>
+            <div id="lista-rutinas" class="grid-list"></div>
+        </section>
+
+        <section id="ejercicios-section" class="hidden">
+            <h2>Ejercicios de: <span id="rutina-activa-nombre"></span></h2>
+            <form id="form-ejercicio">
+                <input type="hidden" id="rutina-id-actual">
+                <input type="text" id="nombre-ejercicio" placeholder="Nombre del ejercicio" required>
+                <input type="number" id="series-ejercicio" placeholder="Series" required>
+                <input type="number" id="reps-ejercicio" placeholder="Repeticiones" required>
+                <input type="text" id="descanso-ejercicio" placeholder="Descanso (ej: 60s)" required>
+                <button type="submit">Agregar Ejercicio</button>
+            </form>
+            <div id="lista-ejercicios" class="grid-list"></div>
+            
+            <div class="historial-container">
+                <h3>Historial de Entrenamientos</h3>
+                <button id="btn-registrar-entrenamiento">Registrar Entrenamiento de Hoy</button>
+                <ul id="lista-historial"></ul>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

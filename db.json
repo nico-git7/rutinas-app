@@ -1,0 +1,30 @@
+{
+  "rutinas": [
+    {
+      "nombre": "Pecho",
+      "dias": [
+        "Lunes y Jueves"
+      ],
+      "id": "-yiCp1G0-qg"
+    }
+  ],
+  "ejercicios": [
+    {
+      "id": "1",
+      "rutinaId": null,
+      "nombre": "Press de banca",
+      "series": 4,
+      "repeticiones": 10,
+      "descanso": "60 seg"
+    }
+  ],
+  "historial": [
+    {
+      "id": "1",
+      "rutinaId": null,
+      "fecha": "2025-06-15",
+      "observacion": "Aumenté el peso en press de banca"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
