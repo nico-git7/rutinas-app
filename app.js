@@ -1,4 +1,4 @@
-const URL_BASE = 'http://localhost:3000';
+const URL_BASE = 'https://rutinas-app-yg31.onrender.com';
 
 // Referencias del DOM
 const formRutina = document.getElementById('form-rutina');
