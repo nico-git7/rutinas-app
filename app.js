@@ -1,4 +1,4 @@
-const URL_BASE = 'https://rutinas-app-yg31.onrender.com';type app.js
+﻿const URL_BASE = 'https://rutinas-app-yg31.onrender.com';
 
 // Referencias del DOM
 const formRutina = document.getElementById('form-rutina');
@@ -10,15 +10,26 @@ const formEjercicio = document.getElementById('form-ejercicio');
 const listaEjercicios = document.getElementById('lista-ejercicios');
 const btnRegistrarEntrenamiento = document.getElementById('btn-registrar-entrenamiento');
 const listaHistorial = document.getElementById('lista-historial');
+const btnSubmitRutina = document.getElementById('btn-submit-rutina');
+const btnCancelarRutina = document.getElementById('btn-cancelar-rutina');
+const btnSubmitEjercicio = document.getElementById('btn-submit-ejercicio');
+const btnCancelarEjercicio = document.getElementById('btn-cancelar-ejercicio');
+
+// IDs de los elementos que se están editando actualmente (null = modo "crear nuevo")
+let editandoRutinaId = null;
+let editandoEjercicioId = null;
 
 // Cargar rutinas al iniciar
 document.addEventListener('DOMContentLoaded', obtenerRutinas);
 
 // --- CRUD 1: RUTINAS ---
 
+let rutinasCache = [];
+
 async function obtenerRutinas() {
     try {
         const response = await axios.get(`${URL_BASE}/rutinas`);
+        rutinasCache = response.data;
         renderizarRutinas(response.data);
     } catch (error) {
         console.error("Error al obtener rutinas:", error);
@@ -35,6 +46,7 @@ function renderizarRutinas(rutinas) {
             <p><strong>Días:</strong> ${rutina.dias.join(', ')}</p>
             <div class="card-actions">
                 <button onclick="verDetalleRutina('${rutina.id}', '${rutina.nombre}')">Ver Ejercicios</button>
+                <button onclick="editarRutina('${rutina.id}')">Editar</button>
                 <button class="btn-eliminar" onclick="eliminarRutina('${rutina.id}')">Eliminar</button>
             </div>
         `;
@@ -46,15 +58,40 @@ formRutina.addEventListener('submit', async (e) => {
     e.preventDefault();
     const nombre = document.getElementById('nombre-rutina').value;
     const dias = document.getElementById('dias-rutina').value.split(',').map(d => d.trim());
-    
+
     try {
-        await axios.post(`${URL_BASE}/rutinas`, { nombre, dias });
-        formRutina.reset();
-        obtenerRutinas(); 
+        if (editandoRutinaId) {
+            await axios.patch(`${URL_BASE}/rutinas/${editandoRutinaId}`, { nombre, dias });
+        } else {
+            await axios.post(`${URL_BASE}/rutinas`, { nombre, dias });
+        }
+        cancelarEdicionRutina();
+        obtenerRutinas();
     } catch (error) {
-        console.error("Error al crear rutina:", error);
+        console.error("Error al guardar rutina:", error);
     }
 });
+
+function editarRutina(id) {
+    const rutina = rutinasCache.find(r => r.id === id);
+    if (!rutina) return;
+
+    editandoRutinaId = id;
+    document.getElementById('nombre-rutina').value = rutina.nombre;
+    document.getElementById('dias-rutina').value = rutina.dias.join(', ');
+    btnSubmitRutina.textContent = 'Guardar Cambios';
+    btnCancelarRutina.classList.remove('hidden');
+    document.getElementById('nombre-rutina').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function cancelarEdicionRutina() {
+    editandoRutinaId = null;
+    formRutina.reset();
+    btnSubmitRutina.textContent = 'Crear Rutina';
+    btnCancelarRutina.classList.add('hidden');
+}
+
+btnCancelarRutina.addEventListener('click', cancelarEdicionRutina);
 
 async function eliminarRutina(id) {
     if(!confirm('¿Seguro que quieres eliminar esta rutina y todos sus datos?')) return;
@@ -86,15 +123,19 @@ function verDetalleRutina(id, nombre) {
     rutinaIdActual.value = id;
     rutinaActivaNombre.textContent = nombre;
     seccionEjercicios.classList.remove('hidden');
+    cancelarEdicionEjercicio();
     obtenerEjercicios(id);
     obtenerHistorial(id);
 }
 
 // --- CRUD 2: EJERCICIOS ---
 
+let ejerciciosCache = [];
+
 async function obtenerEjercicios(rutinaId) {
     try {
         const response = await axios.get(`${URL_BASE}/ejercicios?rutinaId=${rutinaId}`);
+        ejerciciosCache = response.data;
         renderizarEjercicios(response.data);
     } catch (error) {
         console.error("Error al obtener ejercicios:", error);
@@ -111,6 +152,7 @@ function renderizarEjercicios(ejercicios) {
             <p>${ej.series} series x ${ej.repeticiones} reps</p>
             <p>Descanso: ${ej.descanso}</p>
             <div class="card-actions">
+                <button onclick="editarEjercicio('${ej.id}')">Editar</button>
                 <button class="btn-eliminar" onclick="eliminarEjercicio('${ej.id}')">Eliminar</button>
             </div>
         `;
@@ -121,7 +163,7 @@ function renderizarEjercicios(ejercicios) {
 formEjercicio.addEventListener('submit', async (e) => {
     e.preventDefault();
     const rutinaId = document.getElementById('rutina-id-actual').value;
-    const nuevoEjercicio = {
+    const datosEjercicio = {
         rutinaId: rutinaId,
         nombre: document.getElementById('nombre-ejercicio').value,
         series: parseInt(document.getElementById('series-ejercicio').value),
@@ -130,13 +172,40 @@ formEjercicio.addEventListener('submit', async (e) => {
     };
 
     try {
-        await axios.post(`${URL_BASE}/ejercicios`, nuevoEjercicio);
-        formEjercicio.reset();
+        if (editandoEjercicioId) {
+            await axios.patch(`${URL_BASE}/ejercicios/${editandoEjercicioId}`, datosEjercicio);
+        } else {
+            await axios.post(`${URL_BASE}/ejercicios`, datosEjercicio);
+        }
+        cancelarEdicionEjercicio();
         obtenerEjercicios(rutinaId);
     } catch (error) {
-        console.error("Error al crear ejercicio:", error);
+        console.error("Error al guardar ejercicio:", error);
     }
 });
+
+function editarEjercicio(id) {
+    const ejercicio = ejerciciosCache.find(e => e.id === id);
+    if (!ejercicio) return;
+
+    editandoEjercicioId = id;
+    document.getElementById('nombre-ejercicio').value = ejercicio.nombre;
+    document.getElementById('series-ejercicio').value = ejercicio.series;
+    document.getElementById('reps-ejercicio').value = ejercicio.repeticiones;
+    document.getElementById('descanso-ejercicio').value = ejercicio.descanso;
+    btnSubmitEjercicio.textContent = 'Guardar Cambios';
+    btnCancelarEjercicio.classList.remove('hidden');
+    document.getElementById('nombre-ejercicio').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function cancelarEdicionEjercicio() {
+    editandoEjercicioId = null;
+    formEjercicio.reset();
+    btnSubmitEjercicio.textContent = 'Agregar Ejercicio';
+    btnCancelarEjercicio.classList.add('hidden');
+}
+
+btnCancelarEjercicio.addEventListener('click', cancelarEdicionEjercicio);
 
 async function eliminarEjercicio(id) {
     try {
