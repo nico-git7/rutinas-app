@@ -1,4 +1,4 @@
-ï»¿const URL_BASE = 'https://rutinas-app-yg31.onrender.com';
+const URL_BASE = 'https://rutinas-app-yg31.onrender.com';
 
 // Referencias del DOM
 const formRutina = document.getElementById('form-rutina');
@@ -15,7 +15,7 @@ const btnCancelarRutina = document.getElementById('btn-cancelar-rutina');
 const btnSubmitEjercicio = document.getElementById('btn-submit-ejercicio');
 const btnCancelarEjercicio = document.getElementById('btn-cancelar-ejercicio');
 
-// IDs de los elementos que se estÃ¡n editando actualmente (null = modo "crear nuevo")
+// IDs de los elementos que se están editando actualmente (null = modo "crear nuevo")
 let editandoRutinaId = null;
 let editandoEjercicioId = null;
 
@@ -43,7 +43,7 @@ function renderizarRutinas(rutinas) {
         div.className = 'card';
         div.innerHTML = `
             <h3>${rutina.nombre}</h3>
-            <p><strong>DÃ­as:</strong> ${rutina.dias.join(', ')}</p>
+            <p><strong>Días:</strong> ${rutina.dias.join(', ')}</p>
             <div class="card-actions">
                 <button onclick="verDetalleRutina('${rutina.id}', '${rutina.nombre}')">Ver Ejercicios</button>
                 <button onclick="editarRutina('${rutina.id}')">Editar</button>
@@ -73,7 +73,7 @@ formRutina.addEventListener('submit', async (e) => {
 });
 
 function editarRutina(id) {
-    const rutina = rutinasCache.find(r => r.id === id);
+    const rutina = rutinasCache.find(r => String(r.id) === String(id));
     if (!rutina) return;
 
     editandoRutinaId = id;
@@ -94,22 +94,22 @@ function cancelarEdicionRutina() {
 btnCancelarRutina.addEventListener('click', cancelarEdicionRutina);
 
 async function eliminarRutina(id) {
-    if(!confirm('Â¿Seguro que quieres eliminar esta rutina y todos sus datos?')) return;
+    if(!confirm('¿Seguro que quieres eliminar esta rutina y todos sus datos?')) return;
     
     try {
-        // EliminaciÃ³n en cascada: Ejercicios
+        // Eliminación en cascada: Ejercicios
         const resEjercicios = await axios.get(`${URL_BASE}/ejercicios?rutinaId=${id}`);
         for (const ej of resEjercicios.data) {
             await axios.delete(`${URL_BASE}/ejercicios/${ej.id}`);
         }
         
-        // EliminaciÃ³n en cascada: Historial
+        // Eliminación en cascada: Historial
         const resHistorial = await axios.get(`${URL_BASE}/historial?rutinaId=${id}`);
         for (const hist of resHistorial.data) {
             await axios.delete(`${URL_BASE}/historial/${hist.id}`);
         }
         
-        // Eliminar la rutina en sÃ­
+        // Eliminar la rutina en sí
         await axios.delete(`${URL_BASE}/rutinas/${id}`);
         
         obtenerRutinas();
@@ -185,7 +185,7 @@ formEjercicio.addEventListener('submit', async (e) => {
 });
 
 function editarEjercicio(id) {
-    const ejercicio = ejerciciosCache.find(e => e.id === id);
+    const ejercicio = ejerciciosCache.find(e => String(e.id) === String(id));
     if (!ejercicio) return;
 
     editandoEjercicioId = id;
@@ -242,7 +242,7 @@ function renderizarHistorial(historial) {
 
 btnRegistrarEntrenamiento.addEventListener('click', async () => {
     const rutinaId = document.getElementById('rutina-id-actual').value;
-    const observacion = prompt("Â¿Alguna observaciÃ³n para el entrenamiento? (Opcional)");
+    const observacion = prompt("¿Alguna observación para el entrenamiento? (Opcional)");
     
     if (observacion !== null) {
         const nuevoRegistro = {
@@ -261,7 +261,7 @@ btnRegistrarEntrenamiento.addEventListener('click', async () => {
 });
 
 async function eliminarHistorial(id) {
-    if(!confirm('Â¿Borrar este registro del historial?')) return;
+    if(!confirm('¿Borrar este registro del historial?')) return;
     try {
         await axios.delete(`${URL_BASE}/historial/${id}`);
         obtenerHistorial(rutinaIdActual.value);
