@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIS RUTINAS EN HammerX</title>
+    <title>HammerX</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Rutinas HammerX </h1>
+        <h1>MIS RUTINAS EN HAMMERX</h1>
     </header>
 
     <main class="container">
@@ -17,7 +17,8 @@
             <form id="form-rutina">
                 <input type="text" id="nombre-rutina" placeholder="Nombre (ej: Fuerza)" required>
                 <input type="text" id="dias-rutina" placeholder="Días (ej: Lunes, Miércoles)" required>
-                <button type="submit">Crear Rutina</button>
+                <button type="submit" id="btn-submit-rutina">Crear Rutina</button>
+                <button type="button" id="btn-cancelar-rutina" class="btn-secundario hidden">Cancelar</button>
             </form>
             <div id="lista-rutinas" class="grid-list"></div>
         </section>
@@ -30,7 +31,8 @@
                 <input type="number" id="series-ejercicio" placeholder="Series" required>
                 <input type="number" id="reps-ejercicio" placeholder="Repeticiones" required>
                 <input type="text" id="descanso-ejercicio" placeholder="Descanso (ej: 60s)" required>
-                <button type="submit">Agregar Ejercicio</button>
+                <button type="submit" id="btn-submit-ejercicio">Agregar Ejercicio</button>
+                <button type="button" id="btn-cancelar-ejercicio" class="btn-secundario hidden">Cancelar</button>
             </form>
             <div id="lista-ejercicios" class="grid-list"></div>
             
@@ -41,8 +43,7 @@
             </div>
         </section>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="app.js"></script>
 </body>

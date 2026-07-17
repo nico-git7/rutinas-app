@@ -1,13 +1,5 @@
 {
-  "rutinas": [
-    {
-      "nombre": "Pecho",
-      "dias": [
-        "Lunes y Jueves"
-      ],
-      "id": "-yiCp1G0-qg"
-    }
-  ],
+  "rutinas": [],
   "ejercicios": [
     {
       "id": "1",

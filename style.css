@@ -207,6 +207,18 @@ form button:hover {
   background: #ff4038;
 }
 
+form button.btn-secundario {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-dim);
+}
+
+form button.btn-secundario:hover {
+  background: transparent;
+  border-color: var(--text-dim);
+  color: var(--text);
+}
+
 form button:active {
   transform: scale(0.98);
 }

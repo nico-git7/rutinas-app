@@ -1,4 +1,4 @@
-const URL_BASE = 'https://rutinas-app-yg31.onrender.com';
+const URL_BASE = 'https://rutinas-app-yg31.onrender.com';type app.js
 
 // Referencias del DOM
 const formRutina = document.getElementById('form-rutina');
