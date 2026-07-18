@@ -3,48 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HammerX</title>
+    <title>Registro de rutinas de ejercicios</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>RUTINAS EN HAMMERX</h1>
+        <h1>Registro de Rutinas de Ejercicios</h1>
+        <div id="usuario-info" class="hidden">
+            <span id="usuario-email"></span>
+            <button id="btn-logout">Cerrar Sesión</button>
+        </div>
     </header>
 
     <main class="container">
-        <section id="rutinas-section">
-            <h2>Mis Rutinas</h2>
-            <form id="form-rutina">
-                <input type="text" id="nombre-rutina" placeholder="Nombre (ej: Fuerza)" required>
-                <input type="text" id="dias-rutina" placeholder="Días (ej: Lunes, Miércoles)" required>
-                <button type="submit" id="btn-submit-rutina">Crear Rutina</button>
-                <button type="button" id="btn-cancelar-rutina" class="btn-secundario hidden">Cancelar</button>
+
+        <!-- ---------- LOGIN / REGISTRO ---------- -->
+        <section id="auth-section">
+            <h2>Iniciar Sesión</h2>
+            <form id="form-login">
+                <input type="email" id="email-login" placeholder="Email" required>
+                <input type="password" id="password-login" placeholder="Contraseña" required>
+                <button type="submit">Ingresar</button>
             </form>
-            <div id="lista-rutinas" class="grid-list"></div>
+            <p class="auth-switch">¿No tenés cuenta? <button type="button" id="btn-mostrar-registro" class="btn-link">Registrate</button></p>
+
+            <form id="form-registro" class="hidden">
+                <p class="auth-nota">Solo el dueño de la app puede crear cuentas nuevas.</p>
+                <input type="password" id="secreto-admin" placeholder="Clave de administrador" required>
+                <input type="email" id="email-registro" placeholder="Email de la persona" required>
+                <input type="password" id="password-registro" placeholder="Contraseña (mínimo 6 caracteres)" required minlength="6">
+                <button type="submit">Crear Cuenta</button>
+            </form>
+            <p class="auth-switch hidden" id="volver-a-login-container">¿Ya tenés cuenta? <button type="button" id="btn-mostrar-login" class="btn-link">Iniciar sesión</button></p>
+
+            <p id="auth-error" class="auth-error hidden"></p>
+            <p class="auth-switch"><button type="button" id="btn-ir-admin" class="btn-link">Panel de administrador</button></p>
         </section>
 
-        <section id="ejercicios-section" class="hidden">
-            <h2>Ejercicios de: <span id="rutina-activa-nombre"></span></h2>
-            <form id="form-ejercicio">
-                <input type="hidden" id="rutina-id-actual">
-                <input type="text" id="nombre-ejercicio" placeholder="Nombre del ejercicio" required>
-                <input type="number" id="series-ejercicio" placeholder="Series" required>
-                <input type="number" id="reps-ejercicio" placeholder="Repeticiones" required>
-                <input type="text" id="descanso-ejercicio" placeholder="Descanso (ej: 60s)" required>
-                <button type="submit" id="btn-submit-ejercicio">Agregar Ejercicio</button>
-                <button type="button" id="btn-cancelar-ejercicio" class="btn-secundario hidden">Cancelar</button>
+        <!-- ---------- PANEL DE ADMINISTRADOR ---------- -->
+        <section id="admin-login-section" class="hidden">
+            <h2>Panel de Administrador</h2>
+            <form id="form-admin-login">
+                <input type="password" id="clave-admin-panel" placeholder="Clave de administrador" required>
+                <button type="submit">Entrar</button>
             </form>
-            <div id="lista-ejercicios" class="grid-list"></div>
-            
-            <div class="historial-container">
-                <h3>Historial de Entrenamientos</h3>
-                <button id="btn-registrar-entrenamiento">Registrar Entrenamiento de Hoy</button>
-                <ul id="lista-historial"></ul>
-            </div>
+            <p class="auth-switch"><button type="button" id="btn-volver-login-desde-admin" class="btn-link">Volver</button></p>
+            <p id="admin-login-error" class="auth-error hidden"></p>
         </section>
+
+        <section id="admin-panel-section" class="hidden">
+            <h2>Panel de Administrador</h2>
+            <button type="button" id="btn-cerrar-admin" class="btn-secundario">Salir del panel</button>
+            <div id="admin-usuarios-lista" class="grid-list"></div>
+        </section>
+
+        <!-- ---------- CONTENIDO DE LA APP (oculto hasta loguearse) ---------- -->
+        <div id="app-content" class="hidden">
+            <section id="rutinas-section">
+                <h2>Mis Rutinas</h2>
+                <form id="form-rutina">
+                    <input type="text" id="nombre-rutina" placeholder="Nombre (ej: Fuerza)" required>
+                    <input type="text" id="dias-rutina" placeholder="Días (ej: Lunes, Miércoles)" required>
+                    <button type="submit" id="btn-submit-rutina">Crear Rutina</button>
+                    <button type="button" id="btn-cancelar-rutina" class="btn-secundario hidden">Cancelar</button>
+                </form>
+                <div id="lista-rutinas" class="grid-list"></div>
+            </section>
+
+            <section id="ejercicios-section" class="hidden">
+                <h2>Ejercicios de: <span id="rutina-activa-nombre"></span></h2>
+                <form id="form-ejercicio">
+                    <input type="hidden" id="rutina-id-actual">
+                    <input type="text" id="nombre-ejercicio" placeholder="Nombre del ejercicio" required>
+                    <input type="number" id="series-ejercicio" placeholder="Series" required>
+                    <input type="number" id="reps-ejercicio" placeholder="Repeticiones" required>
+                    <input type="number" id="peso-ejercicio" placeholder="Peso (kg)" step="0.5" min="0">
+                    <input type="text" id="descanso-ejercicio" placeholder="Descanso (ej: 60s)" required>
+                    <button type="submit" id="btn-submit-ejercicio">Agregar Ejercicio</button>
+                    <button type="button" id="btn-cancelar-ejercicio" class="btn-secundario hidden">Cancelar</button>
+                </form>
+                <div id="lista-ejercicios" class="grid-list"></div>
+
+                <div class="historial-container">
+                    <h3>Historial de Entrenamientos</h3>
+                    <button id="btn-registrar-entrenamiento">Registrar Entrenamiento de Hoy</button>
+                    <ul id="lista-historial"></ul>
+                </div>
+            </section>
+        </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="app.js"></script>
+    <script src="server.js"></script>
 </body>
 </html>
