@@ -267,7 +267,7 @@ btnCerrarAdmin.addEventListener('click', () => {
 
 async function obtenerRutinas() {
     try {
-        const response = await axios.get(`${URL_BASE}/${RUTINAS_PATH}`, apiConfig());
+        const response = await axios.get(`${URL_BASE}/${RUTINAS_PATH}?userId=${authUserId}`, apiConfig());
         rutinasCache = response.data;
         renderizarRutinas(response.data);
     } catch (error) {
@@ -336,12 +336,12 @@ async function eliminarRutina(id) {
     if (!confirm('¿Seguro que quieres eliminar esta rutina y todos sus datos?')) return;
 
     try {
-        const resEjercicios = await axios.get(`${URL_BASE}/${EJERCICIOS_PATH}?rutinaId=${id}`, apiConfig());
+        const resEjercicios = await axios.get(`${URL_BASE}/${EJERCICIOS_PATH}?rutinaId=${id}&userId=${authUserId}`, apiConfig());
         for (const ej of resEjercicios.data) {
             await axios.delete(`${URL_BASE}/${EJERCICIOS_PATH}/${ej.id}`, apiConfig());
         }
 
-        const resHistorial = await axios.get(`${URL_BASE}/${HISTORIAL_PATH}?rutinaId=${id}`, apiConfig());
+        const resHistorial = await axios.get(`${URL_BASE}/${HISTORIAL_PATH}?rutinaId=${id}&userId=${authUserId}`, apiConfig());
         for (const hist of resHistorial.data) {
             await axios.delete(`${URL_BASE}/${HISTORIAL_PATH}/${hist.id}`, apiConfig());
         }
@@ -370,7 +370,7 @@ function verDetalleRutina(id, nombre) {
 
 async function obtenerEjercicios(rutinaId) {
     try {
-        const response = await axios.get(`${URL_BASE}/${EJERCICIOS_PATH}?rutinaId=${rutinaId}`, apiConfig());
+        const response = await axios.get(`${URL_BASE}/${EJERCICIOS_PATH}?rutinaId=${rutinaId}&userId=${authUserId}`, apiConfig());
         ejerciciosCache = response.data;
         renderizarEjercicios(response.data);
     } catch (error) {
@@ -462,7 +462,7 @@ async function eliminarEjercicio(id) {
 
 async function obtenerHistorial(rutinaId) {
     try {
-        const response = await axios.get(`${URL_BASE}/${HISTORIAL_PATH}?rutinaId=${rutinaId}`, apiConfig());
+        const response = await axios.get(`${URL_BASE}/${HISTORIAL_PATH}?rutinaId=${rutinaId}&userId=${authUserId}`, apiConfig());
         const historialInvertido = response.data.reverse();
         renderizarHistorial(historialInvertido);
     } catch (error) {
