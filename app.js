@@ -9,6 +9,7 @@ const HISTORIAL_PATH = '600/historial';
 // --- Estado de sesión ---
 let authToken = localStorage.getItem('authToken') || null;
 let authUserEmail = localStorage.getItem('authUserEmail') || null;
+let authUserId = localStorage.getItem('authUserId') || null;
 
 function apiConfig() {
     return { headers: { Authorization: `Bearer ${authToken}` } };
@@ -119,7 +120,7 @@ formLogin.addEventListener('submit', async (e) => {
 
     try {
         const response = await axios.post(`${URL_BASE}/login`, { email, password });
-        guardarSesion(response.data.accessToken, email);
+        guardarSesion(response.data.accessToken, email, response.data.user.id);
         formLogin.reset();
         mostrarApp();
     } catch (error) {
@@ -138,7 +139,7 @@ formRegistro.addEventListener('submit', async (e) => {
         const response = await axios.post(`${URL_BASE}/register`, { email, password }, {
             headers: { 'x-admin-secret': secretoAdmin }
         });
-        guardarSesion(response.data.accessToken, email);
+        guardarSesion(response.data.accessToken, email, response.data.user.id);
         formRegistro.reset();
         mostrarApp();
     } catch (error) {
@@ -152,18 +153,22 @@ formRegistro.addEventListener('submit', async (e) => {
     }
 });
 
-function guardarSesion(token, email) {
+function guardarSesion(token, email, userId) {
     authToken = token;
     authUserEmail = email;
+    authUserId = userId;
     localStorage.setItem('authToken', token);
     localStorage.setItem('authUserEmail', email);
+    localStorage.setItem('authUserId', userId);
 }
 
 btnLogout.addEventListener('click', () => {
     authToken = null;
     authUserEmail = null;
+    authUserId = null;
     localStorage.removeItem('authToken');
     localStorage.removeItem('authUserEmail');
+    localStorage.removeItem('authUserId');
     mostrarAuth();
 });
 
@@ -297,7 +302,7 @@ formRutina.addEventListener('submit', async (e) => {
         if (editandoRutinaId) {
             await axios.patch(`${URL_BASE}/${RUTINAS_PATH}/${editandoRutinaId}`, { nombre, dias }, apiConfig());
         } else {
-            await axios.post(`${URL_BASE}/${RUTINAS_PATH}`, { nombre, dias }, apiConfig());
+            await axios.post(`${URL_BASE}/${RUTINAS_PATH}`, { nombre, dias, userId: authUserId }, apiConfig());
         }
         cancelarEdicionRutina();
         obtenerRutinas();
@@ -397,6 +402,7 @@ formEjercicio.addEventListener('submit', async (e) => {
     const pesoValor = document.getElementById('peso-ejercicio').value;
     const datosEjercicio = {
         rutinaId: rutinaId,
+        userId: authUserId,
         nombre: document.getElementById('nombre-ejercicio').value,
         series: parseInt(document.getElementById('series-ejercicio').value),
         repeticiones: parseInt(document.getElementById('reps-ejercicio').value),
@@ -483,6 +489,7 @@ btnRegistrarEntrenamiento.addEventListener('click', async () => {
     if (observacion !== null) {
         const nuevoRegistro = {
             rutinaId: rutinaId,
+            userId: authUserId,
             fecha: new Date().toLocaleDateString(),
             observacion: observacion
         };
