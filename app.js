@@ -1,4 +1,4 @@
-﻿const URL_BASE = 'https://rutinas-app-yg31.onrender.com';
+const URL_BASE = 'https://rutinas-app-yg31.onrender.com';
 
 // El "600" antes del nombre del recurso le dice al backend:
 // "cada rutina/ejercicio/historial pertenece a un usuario, y solo ese usuario puede verlo o editarlo"
@@ -265,11 +265,26 @@ btnCerrarAdmin.addEventListener('click', () => {
 // CRUD 1: RUTINAS
 // =========================================================
 
+// json-server-auth devuelve 403 (en vez de una lista vacía) cuando el usuario
+// todavía no tiene NINGÚN elemento propio en la colección completa del recurso.
+// Esta función trata ese caso puntual como "no hay nada" en lugar de un error real.
+async function getPrivado(url) {
+    try {
+        const response = await axios.get(url, apiConfig());
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.status === 403) {
+            return [];
+        }
+        throw error;
+    }
+}
+
 async function obtenerRutinas() {
     try {
-        const response = await axios.get(`${URL_BASE}/${RUTINAS_PATH}?userId=${authUserId}`, apiConfig());
-        rutinasCache = response.data;
-        renderizarRutinas(response.data);
+        const data = await getPrivado(`${URL_BASE}/${RUTINAS_PATH}?userId=${authUserId}`);
+        rutinasCache = data;
+        renderizarRutinas(data);
     } catch (error) {
         console.error("Error al obtener rutinas:", error);
     }
@@ -336,13 +351,13 @@ async function eliminarRutina(id) {
     if (!confirm('¿Seguro que quieres eliminar esta rutina y todos sus datos?')) return;
 
     try {
-        const resEjercicios = await axios.get(`${URL_BASE}/${EJERCICIOS_PATH}?rutinaId=${id}&userId=${authUserId}`, apiConfig());
-        for (const ej of resEjercicios.data) {
+        const ejercicios = await getPrivado(`${URL_BASE}/${EJERCICIOS_PATH}?rutinaId=${id}&userId=${authUserId}`);
+        for (const ej of ejercicios) {
             await axios.delete(`${URL_BASE}/${EJERCICIOS_PATH}/${ej.id}`, apiConfig());
         }
 
-        const resHistorial = await axios.get(`${URL_BASE}/${HISTORIAL_PATH}?rutinaId=${id}&userId=${authUserId}`, apiConfig());
-        for (const hist of resHistorial.data) {
+        const historial = await getPrivado(`${URL_BASE}/${HISTORIAL_PATH}?rutinaId=${id}&userId=${authUserId}`);
+        for (const hist of historial) {
             await axios.delete(`${URL_BASE}/${HISTORIAL_PATH}/${hist.id}`, apiConfig());
         }
 
@@ -352,6 +367,7 @@ async function eliminarRutina(id) {
         seccionEjercicios.classList.add('hidden');
     } catch (error) {
         console.error("Error al eliminar rutina en cascada:", error);
+        alert('No se pudo eliminar la rutina. Probá de nuevo.');
     }
 }
 
@@ -370,9 +386,9 @@ function verDetalleRutina(id, nombre) {
 
 async function obtenerEjercicios(rutinaId) {
     try {
-        const response = await axios.get(`${URL_BASE}/${EJERCICIOS_PATH}?rutinaId=${rutinaId}&userId=${authUserId}`, apiConfig());
-        ejerciciosCache = response.data;
-        renderizarEjercicios(response.data);
+        const data = await getPrivado(`${URL_BASE}/${EJERCICIOS_PATH}?rutinaId=${rutinaId}&userId=${authUserId}`);
+        ejerciciosCache = data;
+        renderizarEjercicios(data);
     } catch (error) {
         console.error("Error al obtener ejercicios:", error);
     }
@@ -462,8 +478,8 @@ async function eliminarEjercicio(id) {
 
 async function obtenerHistorial(rutinaId) {
     try {
-        const response = await axios.get(`${URL_BASE}/${HISTORIAL_PATH}?rutinaId=${rutinaId}&userId=${authUserId}`, apiConfig());
-        const historialInvertido = response.data.reverse();
+        const data = await getPrivado(`${URL_BASE}/${HISTORIAL_PATH}?rutinaId=${rutinaId}&userId=${authUserId}`);
+        const historialInvertido = data.reverse();
         renderizarHistorial(historialInvertido);
     } catch (error) {
         console.error("Error al obtener historial:", error);
