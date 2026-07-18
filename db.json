@@ -1,5 +1,12 @@
 {
-  "users": [],
+  "users": [
+    {
+      "id": 1,
+      "email": "1234@gmail.com",
+      "password": "lucas1234",
+      "role": "admin"
+    }
+  ],
   "rutinas": [],
   "ejercicios": [],
   "historial": []
